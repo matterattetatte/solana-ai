@@ -1,4 +1,4 @@
-# NeuralRails Smart Contracts
+# Solazure Smart Contracts
 
 Built with Anchor on Solana.
 

@@ -3,11 +3,11 @@ use anchor_lang::prelude::*;
 declare_id!("NRaiLs1111111111111111111111111111111111111");
 
 #[program]
-pub mod neuralrails {
+pub mod Solazure {
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        msg!("NeuralRails Program Initialized");
+        msg!("Solazure Program Initialized");
         Ok(())
     }
 

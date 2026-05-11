@@ -12,7 +12,7 @@ import {
   Award,
 } from "lucide-react";
 
-export default function NeuralRails() {
+export default function Solazure() {
   const [inferenceInput, setInferenceInput] = useState("What is the capital of Japan?");
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<string | null>(null);
@@ -174,7 +174,7 @@ export default function NeuralRails() {
         <div style={{ maxWidth: "1480px", margin: "0 auto", padding: "20px 48px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <div style={{ width: 52, height: 52, borderRadius: 20, background: "linear-gradient(135deg, #7c3aed, #06b6d4, #ec4899)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, fontWeight: 900, boxShadow: "0 0 60px rgba(124,58,237,0.6)" }}>NR</div>
-            <div style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-1.5px" }}>NeuralRails</div>
+            <div style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-1.5px" }}>Solazure</div>
           </div>
 
           <div style={{ display: "flex", gap: 48, fontSize: 16, color: "#cbd5e1" }}>
@@ -464,7 +464,7 @@ export default function NeuralRails() {
           Join the Waitlist →
         </button>
         <div style={{ marginTop: 120, color: "#64748b", fontSize: 15 }}>
-          NeuralRails © 2026 • The Financial OS for Artificial Intelligence
+          Solazure © 2026 • The Financial OS for Artificial Intelligence
         </div>
       </footer>
     </div>

@@ -3,7 +3,7 @@ from pydantic import BaseModel
 import hashlib
 import time
 
-app = FastAPI(title="NeuralRails - Azure Inference Provider")
+app = FastAPI(title="Solazure - Azure Inference Provider")
 
 class InferenceRequest(BaseModel):
     prompt: str
@@ -21,7 +21,7 @@ async def run_inference(request: InferenceRequest):
     start_time = time.time()
     
     # TODO: Replace with real vLLM / TGI call
-    mock_result = f"[NeuralRails] {request.prompt}\n\nThis is a mock response from {request.model} deployed on Azure."
+    mock_result = f"[Solazure] {request.prompt}\n\nThis is a mock response from {request.model} deployed on Azure."
     
     latency = int((time.time() - start_time) * 1000)
     compute_hash = hashlib.sha256(mock_result.encode()).hexdigest()

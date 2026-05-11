@@ -1,17 +1,25 @@
+import { useEffect, useState } from "react";
 import Presentation from "./views/Presentation";
 import Demo from "./views/Demo";
 
 function App() {
-  const path = window.location.pathname.replace('/solana-ai/', '/')
+  const [view, setView] = useState("presentation");
 
-  switch (path) {
-    case "/demo":
-      return <Demo />;
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
 
-    case "/":
-    default:
-      return <Presentation />;
+    const currentView = params.get("view");
+
+    setView(currentView || "presentation");
+  }, []);
+
+  console.log("Current view:", view); 
+
+  if (view === "demo") {
+    return <Demo />;
   }
+
+  return <Presentation />;
 }
 
 export default App;
