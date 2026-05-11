@@ -12,492 +12,140 @@ import {
   Globe,
   Activity,
   Wallet,
+  TrendingUp,
+  Users,
+  Clock,
+  Award,
 } from "lucide-react";
 
 export default function NeuralRails() {
-  const [inferenceInput, setInferenceInput] = useState(
-    "What is the capital of Japan?"
-  );
-
+  const [inferenceInput, setInferenceInput] = useState("What is the capital of Japan?");
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<string | null>(null);
+  const [selectedModel, setSelectedModel] = useState("Llama-4");
+  const [history, setHistory] = useState<any[]>([]);
 
   const [particles, setParticles] = useState<
     { left: string; top: string; delay: number; duration: number }[]
   >([]);
 
+  // Fake live stats
+  const [liveStats, setLiveStats] = useState({
+    inferences: 1248934,
+    agents: 8459,
+    avgLatency: 287,
+    totalValue: "1.28M",
+  });
+
   useEffect(() => {
-    const generated = [...Array(28)].map(() => ({
+    const generated = [...Array(35)].map(() => ({
       left: `${Math.random() * 100}%`,
       top: `${Math.random() * 100}%`,
-      delay: Math.random() * 6,
-      duration: 4 + Math.random() * 8,
+      delay: Math.random() * 8,
+      duration: 5 + Math.random() * 12,
     }));
-
     setParticles(generated);
+
+    // Simulate live updates
+    const interval = setInterval(() => {
+      setLiveStats(prev => ({
+        inferences: prev.inferences + Math.floor(Math.random() * 7),
+        agents: prev.agents + (Math.random() > 0.7 ? 1 : 0),
+        avgLatency: Math.max(210, prev.avgLatency + (Math.random() * 8 - 4)),
+        totalValue: (parseFloat(prev.totalValue) + Math.random() * 0.02).toFixed(2),
+      }));
+    }, 2800);
+
+    return () => clearInterval(interval);
   }, []);
 
   const handleInference = async () => {
     setIsProcessing(true);
+    await new Promise(resolve => setTimeout(resolve, 1250));
 
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    setResult(
-      "Tokyo is the capital of Japan. It is the political, economic, and cultural center of the country and one of the world's largest metropolitan regions."
-    );
+    const response = "Tokyo is the capital of Japan. It is the political, economic, and cultural center of the country and one of the world's most populous metropolitan areas with over 37 million residents in the greater region.";
+    
+    setResult(response);
+    
+    setHistory(prev => [{
+      id: Date.now(),
+      query: inferenceInput,
+      model: selectedModel,
+      time: "287ms",
+      cost: "$0.00012",
+      response: response.substring(0, 120) + "..."
+    }, ...prev.slice(0, 4)]);
 
     setIsProcessing(false);
   };
 
+  // Simple sparkline data
+  const volumeData = [42, 65, 48, 89, 67, 95, 78, 112, 98, 134, 156, 189];
+
   const styles: any = {
     page: {
       minHeight: "100vh",
-      background:
-        "radial-gradient(circle at top, rgba(91,33,182,0.25), transparent 30%), radial-gradient(circle at bottom right, rgba(6,182,212,0.18), transparent 25%), #000000",
+      background: "radial-gradient(circle at 30% 20%, rgba(91,33,182,0.35) 0%, transparent 50%), radial-gradient(circle at 70% 80%, rgba(6,182,212,0.28) 0%, transparent 60%), #0a0a0a",
       color: "white",
       overflow: "hidden",
-      fontFamily:
-        "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+      fontFamily: "Inter, system-ui, sans-serif",
       position: "relative",
     },
-
     noise: {
       position: "fixed",
       inset: 0,
-      opacity: 0.03,
-      backgroundImage:
-        "url('https://grainy-gradients.vercel.app/noise.svg')",
+      opacity: 0.04,
+      backgroundImage: "url('https://grainy-gradients.vercel.app/noise.svg')",
       pointerEvents: "none",
       zIndex: 1,
     },
-
     nav: {
       position: "fixed",
       top: 0,
       left: 0,
       right: 0,
-      zIndex: 100,
-      backdropFilter: "blur(24px)",
-      WebkitBackdropFilter: "blur(24px)",
-      background: "rgba(0,0,0,0.65)",
-      borderBottom: "1px solid rgba(255,255,255,0.08)",
+      zIndex: 1000,
+      backdropFilter: "blur(32px)",
+      background: "rgba(10,10,10,0.85)",
+      borderBottom: "1px solid rgba(255,255,255,0.1)",
     },
-
-    navInner: {
-      maxWidth: 1320,
-      margin: "0 auto",
-      padding: "22px 40px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-    },
-
-    brand: {
-      display: "flex",
-      alignItems: "center",
-      gap: 14,
-    },
-
-    logo: {
-      width: 42,
-      height: 42,
-      borderRadius: 18,
-      background:
-        "linear-gradient(135deg, #7c3aed 0%, #06b6d4 50%, #d946ef 100%)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      fontSize: 24,
-      fontWeight: 800,
-      boxShadow: "0 0 50px rgba(139,92,246,0.45)",
-    },
-
-    brandText: {
-      fontSize: 28,
-      fontWeight: 700,
-      letterSpacing: "-1px",
-    },
-
-    navLinks: {
-      display: "flex",
-      gap: 36,
-      color: "#cbd5e1",
-      fontSize: 15,
-    },
-
-    navButtonGroup: {
-      display: "flex",
-      gap: 14,
-      alignItems: "center",
-    },
-
-    ghostButton: {
-      padding: "13px 22px",
-      borderRadius: 18,
-      border: "1px solid rgba(255,255,255,0.12)",
-      background: "rgba(255,255,255,0.03)",
-      color: "white",
-      cursor: "pointer",
-      fontWeight: 500,
-      transition: "all 0.3s ease",
-    },
-
-    primaryButton: {
-      padding: "13px 22px",
-      borderRadius: 18,
-      background:
-        "linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.92) 100%)",
-      color: "#000",
-      border: "none",
-      cursor: "pointer",
-      fontWeight: 700,
-      display: "flex",
-      alignItems: "center",
-      gap: 10,
-      boxShadow: "0 10px 40px rgba(255,255,255,0.15)",
-    },
-
+    // ... (keeping most original styles and enhancing them)
     hero: {
-      paddingTop: 170,
-      paddingBottom: 120,
-      paddingLeft: 24,
-      paddingRight: 24,
+      paddingTop: 180,
+      paddingBottom: 140,
       position: "relative",
       zIndex: 5,
     },
-
-    heroContainer: {
-      maxWidth: 1240,
-      margin: "0 auto",
-      textAlign: "center",
-      position: "relative",
-    },
-
-    badge: {
-      display: "inline-flex",
-      alignItems: "center",
-      gap: 10,
-      padding: "10px 18px",
-      borderRadius: 999,
-      background: "rgba(6,182,212,0.08)",
-      border: "1px solid rgba(6,182,212,0.25)",
-      color: "#67e8f9",
-      marginBottom: 34,
-      backdropFilter: "blur(14px)",
-    },
-
-    pulse: {
-      width: 10,
-      height: 10,
-      borderRadius: 999,
-      background: "#22d3ee",
-      boxShadow: "0 0 20px #22d3ee",
-    },
-
     title: {
-      fontSize: "clamp(4rem, 10vw, 8.5rem)",
-      lineHeight: 0.95,
-      fontWeight: 800,
-      letterSpacing: "-6px",
-      marginBottom: 40,
+      fontSize: "clamp(4.2rem, 11vw, 9.2rem)",
+      lineHeight: 0.92,
+      fontWeight: 900,
+      letterSpacing: "-7px",
+      marginBottom: 32,
     },
-
     gradientText: {
-      background:
-        "linear-gradient(90deg, #8b5cf6 0%, #22d3ee 50%, #d946ef 100%)",
+      background: "linear-gradient(90deg, #a855f7, #22d3ee, #f472b6)",
       WebkitBackgroundClip: "text",
       WebkitTextFillColor: "transparent",
-      backgroundSize: "200% auto",
+      backgroundSize: "300% auto",
+      animation: "gradientShift 8s linear infinite",
     },
-
-    subtitle: {
-      maxWidth: 860,
-      margin: "0 auto",
-      color: "#94a3b8",
-      fontSize: 26,
-      lineHeight: 1.6,
-      marginBottom: 52,
-    },
-
-    heroButtons: {
-      display: "flex",
-      justifyContent: "center",
-      gap: 20,
-      flexWrap: "wrap",
-    },
-
-    giantButton: {
-      padding: "22px 38px",
-      borderRadius: 28,
-      border: "none",
-      background:
-        "linear-gradient(135deg, #7c3aed 0%, #d946ef 50%, #06b6d4 100%)",
-      color: "white",
-      fontSize: 18,
-      fontWeight: 700,
-      cursor: "pointer",
-      display: "flex",
-      alignItems: "center",
-      gap: 14,
-      boxShadow: "0 25px 80px rgba(124,58,237,0.4)",
-    },
-
-    giantGhostButton: {
-      padding: "22px 38px",
-      borderRadius: 28,
-      border: "1px solid rgba(255,255,255,0.15)",
-      background: "rgba(255,255,255,0.03)",
-      color: "white",
-      fontSize: 18,
-      fontWeight: 600,
-      cursor: "pointer",
-      display: "flex",
-      alignItems: "center",
-      gap: 14,
-      backdropFilter: "blur(14px)",
-    },
-
-    metrics: {
-      display: "flex",
-      justifyContent: "center",
-      flexWrap: "wrap",
-      gap: 42,
-      marginTop: 70,
-      color: "#94a3b8",
-      fontSize: 15,
-    },
-
-    metricItem: {
-      display: "flex",
-      alignItems: "center",
-      gap: 10,
-    },
-
-    statsBar: {
-      borderTop: "1px solid rgba(255,255,255,0.08)",
-      borderBottom: "1px solid rgba(255,255,255,0.08)",
-      background: "rgba(255,255,255,0.02)",
-      backdropFilter: "blur(14px)",
-      position: "relative",
-      zIndex: 5,
-    },
-
-    statsGrid: {
-      maxWidth: 1280,
-      margin: "0 auto",
-      padding: "46px 24px",
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
-      gap: 30,
-    },
-
-    statCard: {
-      borderRadius: 28,
-      background: "rgba(255,255,255,0.03)",
-      border: "1px solid rgba(255,255,255,0.06)",
-      padding: 34,
-      backdropFilter: "blur(18px)",
-    },
-
-    statValue: {
-      fontSize: 48,
-      fontWeight: 800,
-      letterSpacing: "-2px",
-      marginBottom: 8,
-    },
-
-    statLabel: {
-      color: "#94a3b8",
-      marginBottom: 10,
-    },
-
-    statChange: {
-      color: "#4ade80",
-      fontWeight: 600,
-    },
-
-    section: {
-      padding: "140px 24px",
-      position: "relative",
-      zIndex: 5,
-    },
-
-    sectionContainer: {
-      maxWidth: 1240,
-      margin: "0 auto",
-    },
-
-    sectionTitle: {
-      textAlign: "center",
-      fontSize: "clamp(3rem,6vw,5rem)",
-      fontWeight: 800,
-      letterSpacing: "-3px",
-      marginBottom: 18,
-    },
-
-    sectionSubtitle: {
-      textAlign: "center",
-      color: "#94a3b8",
-      fontSize: 20,
-      marginBottom: 80,
-    },
-
     demoCard: {
-      borderRadius: 36,
-      padding: 40,
-      background:
-        "linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025))",
-      border: "1px solid rgba(255,255,255,0.08)",
-      backdropFilter: "blur(30px)",
-      boxShadow: "0 30px 100px rgba(0,0,0,0.45)",
+      borderRadius: 40,
+      padding: 48,
+      background: "linear-gradient(145deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02))",
+      border: "1px solid rgba(255,255,255,0.12)",
+      backdropFilter: "blur(40px)",
+      boxShadow: "0 40px 120px rgba(0,0,0,0.6)",
     },
-
-    textarea: {
-      width: "100%",
-      minHeight: 160,
-      borderRadius: 24,
-      background: "rgba(0,0,0,0.6)",
-      border: "1px solid rgba(255,255,255,0.08)",
-      padding: 28,
-      color: "white",
-      fontSize: 18,
-      resize: "none",
-      outline: "none",
-      marginBottom: 26,
-      boxSizing: "border-box",
-    },
-
-    inferenceButton: {
-      width: "100%",
-      border: "none",
-      borderRadius: 24,
-      padding: "24px 30px",
-      background:
-        "linear-gradient(135deg, #06b6d4 0%, #7c3aed 50%, #d946ef 100%)",
-      color: "white",
-      fontWeight: 700,
-      fontSize: 20,
-      cursor: "pointer",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 16,
-      boxShadow: "0 20px 60px rgba(6,182,212,0.25)",
-    },
-
     resultCard: {
-      marginTop: 30,
-      borderRadius: 28,
-      padding: 34,
-      background: "rgba(0,0,0,0.5)",
-      border: "1px solid rgba(255,255,255,0.08)",
-      backdropFilter: "blur(20px)",
-    },
-
-    featuresGrid: {
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))",
-      gap: 28,
-    },
-
-    featureCard: {
+      marginTop: 32,
       borderRadius: 32,
       padding: 40,
-      background:
-        "linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02))",
-      border: "1px solid rgba(255,255,255,0.08)",
-      backdropFilter: "blur(24px)",
+      background: "rgba(15,23,42,0.85)",
+      border: "1px solid rgba(103,232,249,0.2)",
       position: "relative",
       overflow: "hidden",
-    },
-
-    featureGlow: {
-      position: "absolute",
-      width: 240,
-      height: 240,
-      borderRadius: 999,
-      background: "rgba(139,92,246,0.18)",
-      filter: "blur(90px)",
-      top: -120,
-      right: -100,
-    },
-
-    featureIcon: {
-      width: 78,
-      height: 78,
-      borderRadius: 26,
-      background:
-        "linear-gradient(135deg, rgba(124,58,237,0.25), rgba(6,182,212,0.2))",
-      border: "1px solid rgba(255,255,255,0.08)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      marginBottom: 30,
-      color: "#67e8f9",
-      backdropFilter: "blur(20px)",
-    },
-
-    featureTitle: {
-      fontSize: 34,
-      fontWeight: 700,
-      marginBottom: 18,
-      letterSpacing: "-1px",
-    },
-
-    featureDesc: {
-      color: "#94a3b8",
-      lineHeight: 1.8,
-      fontSize: 17,
-    },
-
-    footer: {
-      padding: "120px 24px 80px",
-      borderTop: "1px solid rgba(255,255,255,0.08)",
-      textAlign: "center",
-      position: "relative",
-      zIndex: 5,
-    },
-
-    footerTitle: {
-      fontSize: "clamp(3rem,6vw,5rem)",
-      fontWeight: 800,
-      letterSpacing: "-3px",
-      marginBottom: 24,
-    },
-
-    footerSubtitle: {
-      color: "#94a3b8",
-      fontSize: 22,
-      maxWidth: 700,
-      margin: "0 auto",
-      lineHeight: 1.6,
-    },
-
-    footerButton: {
-      marginTop: 50,
-      padding: "24px 42px",
-      borderRadius: 28,
-      border: "none",
-      background: "white",
-      color: "black",
-      fontSize: 20,
-      fontWeight: 700,
-      cursor: "pointer",
-      boxShadow: "0 20px 60px rgba(255,255,255,0.15)",
-    },
-
-    footerBottom: {
-      marginTop: 80,
-      color: "#64748b",
-      fontSize: 14,
-    },
-
-    floatingOrb: {
-      position: "absolute",
-      borderRadius: "999px",
-      filter: "blur(120px)",
-      opacity: 0.35,
-      pointerEvents: "none",
     },
   };
 
@@ -505,98 +153,47 @@ export default function NeuralRails() {
     <div style={styles.page}>
       <div style={styles.noise} />
 
-      {/* FLOATING BACKGROUND ORBS */}
-      <div
-        style={{
-          ...styles.floatingOrb,
-          width: 420,
-          height: 420,
-          background: "#7c3aed",
-          top: -120,
-          left: -100,
-        }}
-      />
+      {/* Background Orbs + Particles */}
+      <div style={{ position: "absolute", width: "620px", height: "620px", borderRadius: "999px", background: "radial-gradient(circle, #7c3aed 20%, transparent 70%)", filter: "blur(140px)", top: "-180px", left: "-180px", opacity: 0.45 }} />
+      <div style={{ position: "absolute", width: "720px", height: "720px", borderRadius: "999px", background: "radial-gradient(circle, #06b6d4 20%, transparent 70%)", filter: "blur(160px)", bottom: "-220px", right: "-200px", opacity: 0.38 }} />
 
-      <div
-        style={{
-          ...styles.floatingOrb,
-          width: 500,
-          height: 500,
-          background: "#06b6d4",
-          bottom: -150,
-          right: -120,
-        }}
-      />
-
-      {/* PARTICLES */}
-      {particles.map((particle, i) => (
+      {particles.map((p, i) => (
         <motion.div
           key={i}
-          animate={{
-            y: [0, -30, 0],
-            opacity: [0.2, 1, 0.2],
-          }}
-          transition={{
-            duration: particle.duration,
-            repeat: Infinity,
-            delay: particle.delay,
-          }}
+          animate={{ y: [-40, 40, -40], opacity: [0.3, 0.9, 0.3] }}
+          transition={{ duration: p.duration, repeat: Infinity, delay: p.delay }}
           style={{
             position: "absolute",
-            left: particle.left,
-            top: particle.top,
-            width: 3,
-            height: 3,
-            borderRadius: 999,
-            background: "white",
-            opacity: 0.4,
-            zIndex: 1,
+            left: p.left,
+            top: p.top,
+            width: i % 3 === 0 ? 5 : 3,
+            height: i % 3 === 0 ? 5 : 3,
+            borderRadius: "999px",
+            background: i % 5 === 0 ? "#67e8f9" : "white",
+            zIndex: 2,
           }}
         />
       ))}
 
-      {/* NAVBAR */}
+      {/* NAV */}
       <nav style={styles.nav}>
-        <div style={styles.navInner}>
-          <div style={styles.brand}>
-            <div style={styles.logo}>N</div>
-
-            <div style={styles.brandText}>NeuralRails</div>
+        <div style={{ maxWidth: "1480px", margin: "0 auto", padding: "20px 48px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <div style={{ width: 52, height: 52, borderRadius: 20, background: "linear-gradient(135deg, #7c3aed, #06b6d4, #ec4899)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, fontWeight: 900, boxShadow: "0 0 60px rgba(124,58,237,0.6)" }}>NR</div>
+            <div style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-1.5px" }}>NeuralRails</div>
           </div>
 
-          <div style={styles.navLinks}>
-            <a href="#how" style={{ color: "inherit", textDecoration: "none" }}>
-              How it Works
-            </a>
-
-            <a
-              href="#features"
-              style={{ color: "inherit", textDecoration: "none" }}
-            >
-              Features
-            </a>
-
-            <a
-              href="#demo"
-              style={{ color: "inherit", textDecoration: "none" }}
-            >
-              Live Demo
-            </a>
-
-            <a
-              href="#docs"
-              style={{ color: "inherit", textDecoration: "none" }}
-            >
-              Docs
-            </a>
+          <div style={{ display: "flex", gap: 48, fontSize: 16, color: "#cbd5e1" }}>
+            <a href="#dashboard" style={{ color: "inherit", textDecoration: "none" }}>Dashboard</a>
+            <a href="#demo" style={{ color: "inherit", textDecoration: "none" }}>Live Demo</a>
+            <a href="#features" style={{ color: "inherit", textDecoration: "none" }}>Features</a>
+            <a href="#market" style={{ color: "inherit", textDecoration: "none" }}>Market</a>
           </div>
 
-          <div style={styles.navButtonGroup}>
-            <button style={styles.ghostButton}>Launch App</button>
-
-            <button style={styles.primaryButton}>
-              <Wallet size={18} />
-              Connect Wallet
+          <div style={{ display: "flex", gap: 16 }}>
+            <button style={{ padding: "14px 28px", borderRadius: 999, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", color: "white", fontWeight: 600 }}>Docs</button>
+            <button style={{ padding: "14px 28px", borderRadius: 999, background: "white", color: "#000", fontWeight: 700, display: "flex", alignItems: "center", gap: 10 }}>
+              <Wallet size={18} /> Connect
             </button>
           </div>
         </div>
@@ -604,361 +201,276 @@ export default function NeuralRails() {
 
       {/* HERO */}
       <section style={styles.hero}>
-        <div style={styles.heroContainer}>
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            style={styles.badge}
-          >
-            <div style={styles.pulse} />
-            Now Live on Solana Devnet
+        <div style={{ maxWidth: "1280px", margin: "0 auto", textAlign: "center", padding: "0 24px" }}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: "inline-flex", alignItems: "center", gap: 12, padding: "12px 28px", background: "rgba(103,232,249,0.1)", border: "1px solid rgba(103,232,249,0.3)", borderRadius: 9999, marginBottom: 32 }}>
+            <div style={{ width: 12, height: 12, background: "#22d3ee", borderRadius: "50%", boxShadow: "0 0 25px #22d3ee", animation: "pulse 2s infinite" }} />
+            LIVE ON SOLANA MAINNET • 1.2M INFERENCES TODAY
           </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9 }}
-            style={styles.title}
-          >
-            AI Compute.
-            <br />
-            <span style={styles.gradientText}>On Solana Rails.</span>
-          </motion.h1>
+          <h1 style={styles.title}>
+            AI that <span style={styles.gradientText}>Pays Itself</span>
+          </h1>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            style={styles.subtitle}
-          >
-            Instant, verifiable, autonomous AI payments with ultra-fast
-            settlement, cryptographic verification, and machine-native finance.
-          </motion.p>
+          <p style={{ fontSize: 28, maxWidth: 820, margin: "0 auto 48px", color: "#94a3b8", lineHeight: 1.5 }}>
+            The first on-chain AI inference layer. <span style={{ color: "#67e8f9" }}>Sub-300ms settlement</span>, verifiable compute, and autonomous agent micropayments.
+          </p>
 
-          <div style={styles.heroButtons}>
+          <div style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
             <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.98 }}
-              style={styles.giantButton}
-              onClick={() =>
-                document
-                  .getElementById("demo")
-                  ?.scrollIntoView({ behavior: "smooth" })
-              }
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => document.getElementById("demo")?.scrollIntoView({ behavior: "smooth" })}
+              style={{
+                padding: "26px 52px",
+                fontSize: 21,
+                fontWeight: 700,
+                borderRadius: 999,
+                background: "linear-gradient(90deg, #7c3aed, #ec4899, #06b6d4)",
+                border: "none",
+                color: "white",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 16,
+                boxShadow: "0 30px 90px rgba(124,58,237,0.5)"
+              }}
             >
-              Try Live Inference
-              <Play size={20} />
-            </motion.button>
-
-            <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.98 }}
-              style={styles.giantGhostButton}
-            >
-              Read Documentation
-              <ExternalLink size={20} />
+              Try Live Inference <Play size={26} />
             </motion.button>
           </div>
+        </div>
+      </section>
 
-          <div style={styles.metrics}>
-            <div style={styles.metricItem}>
-              <CheckCircle color="#4ade80" size={18} />
-              &lt;400ms settlement
+      {/* LIVE DASHBOARD PREVIEW */}
+      <section id="dashboard" style={{ padding: "80px 24px", position: "relative", zIndex: 10 }}>
+        <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 60 }}>
+            <div style={{ fontSize: 18, color: "#67e8f9", letterSpacing: 3, marginBottom: 12 }}>PLATFORM OVERVIEW</div>
+            <div style={{ fontSize: "3.2rem", fontWeight: 800, letterSpacing: "-2px" }}>Live Network Dashboard</div>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))", gap: 28 }}>
+            {/* Stats Cards */}
+            {[
+              { icon: TrendingUp, label: "Total Inferences", value: liveStats.inferences.toLocaleString(), change: "+12.4%" },
+              { icon: Users, label: "Active Agents", value: liveStats.agents.toLocaleString(), change: "LIVE" },
+              { icon: Clock, label: "Avg Latency", value: `${liveStats.avgLatency.toFixed(2)}ms`, change: "-41ms" },
+              { icon: Award, label: "TVL Settled", value: `$${liveStats.totalValue}M`, change: "+2.8%" },
+            ].map((stat, i) => (
+              <motion.div
+                key={i}
+                whileHover={{ y: -12 }}
+                style={{
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: 32,
+                  padding: 40,
+                  backdropFilter: "blur(30px)",
+                }}
+              >
+                <div style={{ color: "#67e8f9", marginBottom: 20 }}>{React.createElement(stat.icon, { size: 42 })}</div>
+                <div style={{ fontSize: 52, fontWeight: 800, letterSpacing: "-3px" }}>{stat.value}</div>
+                <div style={{ color: "#94a3b8" }}>{stat.label}</div>
+                <div style={{ color: "#4ade80", marginTop: 12, fontWeight: 600 }}>{stat.change}</div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Volume Chart */}
+          <div style={{ marginTop: 60, background: "rgba(15,23,42,0.6)", borderRadius: 40, padding: 48, border: "1px solid rgba(255,255,255,0.08)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 32 }}>
+              <div>
+                <div style={{ fontSize: 22, fontWeight: 700 }}>Inference Volume (Last 24h)</div>
+                <div style={{ color: "#4ade80" }}>↑ 184k inferences • Peak at 14:22 UTC</div>
+              </div>
+              <div style={{ color: "#67e8f9", fontWeight: 600 }}>SOLANA • MAINNET</div>
             </div>
 
-            <div style={styles.metricItem}>
-              <CheckCircle color="#4ade80" size={18} />
-              $0.0001 per inference
-            </div>
-
-            <div style={styles.metricItem}>
-              <CheckCircle color="#4ade80" size={18} />
-              Autonomous agent payments
+            <div style={{ display: "flex", alignItems: "flex-end", height: 260, gap: 6 }}>
+              {volumeData.map((val, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ height: 40 }}
+                  animate={{ height: val * 1.6 }}
+                  transition={{ duration: 1.2, delay: i * 0.03 }}
+                  style={{
+                    flex: 1,
+                    background: "linear-gradient(to top, #22d3ee, #a855f7)",
+                    borderRadius: "6px 6px 0 0",
+                    position: "relative",
+                  }}
+                >
+                  <div style={{ position: "absolute", top: -28, left: "50%", transform: "translateX(-50%)", fontSize: 11, color: "#94a3b8", whiteSpace: "nowrap" }}>{val}k</div>
+                </motion.div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* STATS */}
-      <section style={styles.statsBar}>
-        <div style={styles.statsGrid}>
-          {[
-            {
-              value: "$0.00012",
-              label: "Avg Inference Cost",
-              change: "-94%",
-            },
-            {
-              value: "312ms",
-              label: "Settlement Time",
-              change: "real-time",
-            },
-            {
-              value: "1.2M",
-              label: "Inferences Today",
-              change: "+87%",
-            },
-            {
-              value: "8,459",
-              label: "Active Agents",
-              change: "live",
-            },
-          ].map((stat, i) => (
-            <motion.div
-              key={i}
-              whileHover={{ y: -8 }}
-              style={styles.statCard}
-            >
-              <div style={styles.statValue}>{stat.value}</div>
-
-              <div style={styles.statLabel}>{stat.label}</div>
-
-              <div style={styles.statChange}>{stat.change}</div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* DEMO */}
-      <section id="demo" style={styles.section}>
-        <div style={styles.sectionContainer}>
-          <div style={styles.sectionTitle}>Run Live Inference</div>
-
-          <div style={styles.sectionSubtitle}>
-            Solana settlement • AI verification • Stablecoin micropayments
+      {/* ENHANCED DEMO */}
+      <section id="demo" style={{ padding: "120px 24px", background: "rgba(0,0,0,0.4)" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 70 }}>
+            <div style={{ fontSize: 52, fontWeight: 800, letterSpacing: "-2px" }}>Instant Inference Terminal</div>
+            <div style={{ color: "#94a3b8", fontSize: 22 }}>Pay • Infer • Verify • Settle • All on-chain</div>
           </div>
 
           <div style={styles.demoCard}>
+            <div style={{ display: "flex", gap: 16, marginBottom: 24, flexWrap: "wrap" }}>
+              {["Llama-4", "Gemma-3", "Claude-Sonnet", "Mixtral-8x22"].map(m => (
+                <button
+                  key={m}
+                  onClick={() => setSelectedModel(m)}
+                  style={{
+                    padding: "12px 28px",
+                    borderRadius: 999,
+                    background: selectedModel === m ? "linear-gradient(90deg, #7c3aed, #06b6d4)" : "rgba(255,255,255,0.06)",
+                    border: selectedModel === m ? "none" : "1px solid rgba(255,255,255,0.15)",
+                    color: "white",
+                    fontWeight: 600,
+                    cursor: "pointer"
+                  }}
+                >
+                  {m}
+                </button>
+              ))}
+            </div>
+
             <textarea
               value={inferenceInput}
               onChange={(e) => setInferenceInput(e.target.value)}
-              style={styles.textarea}
-              placeholder="Ask anything..."
+              style={{
+                width: "100%",
+                minHeight: 180,
+                background: "rgba(0,0,0,0.7)",
+                border: "1px solid rgba(148,163,184,0.2)",
+                borderRadius: 28,
+                padding: 32,
+                color: "white",
+                fontSize: 19,
+                resize: "vertical",
+                outline: "none",
+              }}
             />
 
             <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
-              disabled={isProcessing}
+              whileHover={{ scale: 1.015 }}
+              whileTap={{ scale: 0.985 }}
               onClick={handleInference}
+              disabled={isProcessing}
               style={{
-                ...styles.inferenceButton,
-                opacity: isProcessing ? 0.8 : 1,
+                width: "100%",
+                padding: "28px 40px",
+                fontSize: 22,
+                fontWeight: 700,
+                borderRadius: 999,
+                background: "linear-gradient(90deg, #06b6d4, #7c3aed, #ec4899)",
+                color: "white",
+                border: "none",
+                marginTop: 20,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 18,
+                boxShadow: "0 25px 70px rgba(6,182,212,0.4)"
               }}
             >
-              {isProcessing ? (
-                <>
-                  Processing on Solana...
-                  <Cpu className="spin" />
-                </>
-              ) : (
-                <>
-                  Run Inference • Pay $0.0001 USDC
-                  <Zap size={22} />
-                </>
-              )}
+              {isProcessing ? "Settling on Solana • Verifying..." : `Run Inference • Pay $0.00012 USDC`}
+              <Zap size={28} />
             </motion.button>
 
             <AnimatePresence>
               {result && (
                 <motion.div
-                  initial={{ opacity: 0, y: 25 }}
+                  initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
                   style={styles.resultCard}
                 >
-                  <div
-                    style={{
-                      color: "#4ade80",
-                      fontSize: 12,
-                      letterSpacing: 2,
-                      textTransform: "uppercase",
-                      marginBottom: 18,
-                      fontWeight: 700,
-                    }}
-                  >
-                    Verified Response
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
+                    <div style={{ color: "#4ade80", fontWeight: 700, letterSpacing: 1 }}>✓ VERIFIED ON SOLANA</div>
+                    <div style={{ fontSize: 14, color: "#64748b" }}>TX: 4kP...9xL2 • {new Date().toLocaleTimeString()}</div>
                   </div>
-
-                  <div
-                    style={{
-                      fontSize: 21,
-                      lineHeight: 1.8,
-                      color: "#f8fafc",
-                    }}
-                  >
-                    {result}
-                  </div>
-
-                  <div
-                    style={{
-                      marginTop: 28,
-                      color: "#64748b",
-                      fontSize: 13,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 10,
-                    }}
-                  >
-                    ✓ Verified on Solana • Transaction: 3vK...9pL2 • 287ms
-                  </div>
+                  <div style={{ fontSize: 20, lineHeight: 1.75 }}>{result}</div>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
+
+          {/* Recent History */}
+          {history.length > 0 && (
+            <div style={{ marginTop: 60 }}>
+              <div style={{ fontSize: 20, marginBottom: 20, fontWeight: 600 }}>Recent Inferences</div>
+              {history.map((item, i) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  style={{
+                    padding: "20px 32px",
+                    background: "rgba(255,255,255,0.03)",
+                    borderRadius: 24,
+                    marginBottom: 12,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    borderLeft: "4px solid #22d3ee"
+                  }}
+                >
+                  <div>
+                    <div style={{ fontWeight: 600 }}>{item.query}</div>
+                    <div style={{ fontSize: 14, color: "#94a3b8" }}>{item.model} • {item.time}</div>
+                  </div>
+                  <div style={{ textAlign: "right", color: "#4ade80", fontSize: 15 }}>{item.cost}</div>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* FEATURES */}
-      <section id="features" style={styles.section}>
-        <div style={styles.sectionContainer}>
-          <div style={styles.sectionTitle}>
-            Built for the Machine Economy
-          </div>
+      {/* FEATURES + MORE */}
+      <section id="features" style={{ padding: "140px 24px" }}>
+        <div style={{ maxWidth: "1280px", margin: "0 auto", textAlign: "center" }}>
+          <div style={{ fontSize: 52, fontWeight: 800, letterSpacing: "-2px", marginBottom: 80 }}>Built for the Agent Economy</div>
 
-          <div style={styles.sectionSubtitle}>
-            Infrastructure for autonomous intelligence and programmable compute
-          </div>
-
-          <div style={styles.featuresGrid}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))", gap: 32 }}>
             {[
-              {
-                icon: <Zap size={38} />,
-                title: "Instant Settlement",
-                desc: "Sub-second finality with Solana rails. AI agents can pay and receive inference responses atomically in real-time.",
-              },
-              {
-                icon: <Shield size={38} />,
-                title: "Verifiable Compute",
-                desc: "Cryptographic proofs and verification layers ensure every inference can be trusted without centralized intermediaries.",
-              },
-              {
-                icon: <Cpu size={38} />,
-                title: "Agent-Native",
-                desc: "Autonomous payment flows, stablecoin micropayments, and programmable AI commerce designed for machine-to-machine coordination.",
-              },
-            ].map((feature, i) => (
+              { icon: Zap, title: "Lightning Settlement", desc: "Sub-300ms finality. Agents can now pay and receive results in a single atomic transaction." },
+              { icon: Shield, title: "Zero-Knowledge Proofs", desc: "Cryptographic guarantees that every inference came from the declared model." },
+              { icon: Cpu, title: "Autonomous Commerce", desc: "Native stablecoin micropayments, agent-to-agent billing, and programmable royalties." },
+            ].map((f, i) => (
               <motion.div
                 key={i}
-                whileHover={{
-                  y: -10,
-                  scale: 1.02,
-                }}
-                style={styles.featureCard}
-              >
-                <div style={styles.featureGlow} />
-
-                <div style={styles.featureIcon}>{feature.icon}</div>
-
-                <div style={styles.featureTitle}>{feature.title}</div>
-
-                <div style={styles.featureDesc}>{feature.desc}</div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* EXTRA GRID */}
-      <section style={{ ...styles.section, paddingTop: 0 }}>
-        <div style={styles.sectionContainer}>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",
-              gap: 28,
-            }}
-          >
-            {[
-              {
-                icon: <Globe size={34} />,
-                title: "Global AI Marketplace",
-              },
-              {
-                icon: <Activity size={34} />,
-                title: "Real-Time Throughput",
-              },
-              {
-                icon: <Sparkles size={34} />,
-                title: "Autonomous Coordination",
-              },
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                whileHover={{ y: -8 }}
+                whileHover={{ y: -16, scale: 1.02 }}
                 style={{
-                  borderRadius: 30,
-                  padding: 36,
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  background: "rgba(255,255,255,0.03)",
-                  backdropFilter: "blur(18px)",
+                  padding: 48,
+                  borderRadius: 36,
+                  background: "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  textAlign: "left",
                 }}
               >
-                <div
-                  style={{
-                    color: "#67e8f9",
-                    marginBottom: 24,
-                  }}
-                >
-                  {item.icon}
-                </div>
-
-                <div
-                  style={{
-                    fontSize: 28,
-                    fontWeight: 700,
-                    letterSpacing: "-1px",
-                    marginBottom: 16,
-                  }}
-                >
-                  {item.title}
-                </div>
-
-                <div
-                  style={{
-                    color: "#94a3b8",
-                    lineHeight: 1.8,
-                  }}
-                >
-                  Infrastructure-grade primitives powering the next generation
-                  of AI-native financial systems.
-                </div>
+                <div style={{ color: "#67e8f9", marginBottom: 32 }}>{React.createElement(f.icon, { size: 52 })}</div>
+                <div style={{ fontSize: 32, fontWeight: 700, marginBottom: 20 }}>{f.title}</div>
+                <div style={{ lineHeight: 1.8, color: "#cbd5e1", fontSize: 18 }}>{f.desc}</div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer style={styles.footer}>
-        <div style={styles.footerTitle}>
-          The Financial Layer for Intelligence
+      <footer style={{ padding: "160px 24px 80px", textAlign: "center", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+        <div style={{ fontSize: "clamp(2.8rem, 7vw, 5.5rem)", fontWeight: 900, letterSpacing: "-3px", marginBottom: 24 }}>
+          Intelligence is now <span style={{ color: "#67e8f9" }}>liquid</span>.
         </div>
-
-        <div style={styles.footerSubtitle}>
-          Intelligence should be liquid, programmable, composable, and instantly
-          tradable across the internet economy.
-        </div>
-
-        <motion.button
-          whileHover={{ scale: 1.04 }}
-          whileTap={{ scale: 0.98 }}
-          style={styles.footerButton}
-        >
-          Get Early Access
-          <ArrowRight
-            size={20}
-            style={{
-              marginLeft: 12,
-              verticalAlign: "middle",
-            }}
-          />
-        </motion.button>
-
-        <div style={styles.footerBottom}>
-          NeuralRails © 2026 • Built on Solana • Designed for the trillion-agent
-          future
+        <button style={{ padding: "26px 56px", fontSize: 22, fontWeight: 700, borderRadius: 999, background: "white", color: "#000", marginTop: 40 }}>
+          Join the Waitlist →
+        </button>
+        <div style={{ marginTop: 120, color: "#64748b", fontSize: 15 }}>
+          NeuralRails © 2026 • The Financial OS for Artificial Intelligence
         </div>
       </footer>
     </div>
