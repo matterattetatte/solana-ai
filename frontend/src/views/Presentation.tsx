@@ -9,10 +9,6 @@ import {
   Cpu,
   TrendingUp,
   Sparkles,
-  Users,
-  Target,
-  Award,
-  BarChart3,
 } from "lucide-react";
 
 type Slide = {
