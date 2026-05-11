@@ -1,28 +1,57 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Solazure</title>
-  <script>
-    // Best working solution for Vite + GitHub Pages
-    (function() {
-      var pathSegmentsToKeep = 1;   // Change to 0 if using username.github.io (no repo name)
-      var l = window.location;
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/solana-ai/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Solazure</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html, body, #root {
+        height: 100%;
+        width: 100%;
+      }
+
+      body {
+        background: #000;
+        font-family: 'Inter', system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+    </style>
+    <script type="module" crossorigin src="/solana-ai/assets/index-Bvuh6Yw1.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!-- Simple Overflow Control -->
+    <script>
+      function updateOverflow() {
+        const path = window.location.pathname;
+
+        if (path === "/" || path === "") {
+          // Homepage - immersive, no scroll
+          document.documentElement.style.overflow = "hidden";
+          document.body.style.overflow = "hidden";
+        } else {
+          // Other pages (like /demo) - allow scrolling
+          document.documentElement.style.overflow = "auto";
+          document.body.style.overflow = "auto";
+        }
+      }
+
+      // Run on initial load
+      updateOverflow();
+
+      // Re-check when user navigates (for SPA navigation)
+      window.addEventListener('popstate', updateOverflow);
       
-      l.replace(
-        l.protocol + '//' + l.hostname + 
-        (l.port ? ':' + l.port : '') + 
-        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + 
-        '/?/' + 
-        l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') + 
-        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') + 
-        l.hash
-      );
-    })();
-  </script>
-</head>
-<body>
-  Redirecting...
-</body>
+      // Optional: Listen for hash or manual path changes
+      setInterval(updateOverflow, 800);
+    </script>
+  </body>
 </html>
