@@ -19,7 +19,7 @@ type Slide = {
   stats?: { value: string; label: string; icon: any; color?: string }[];
   accent?: string;
   chart?: React.ReactNode;
-  team?: { name: string; role: string; avatar: string; bio: string }[];
+  team?: { name: string; role: string; }[];
 };
 
 const SLIDES: Slide[] = [
@@ -137,16 +137,12 @@ const SLIDES: Slide[] = [
     body: "Two engineers who saw the gap between AI velocity and financial rails.",
     team: [
       {
-        name: "Your Name",
-        role: "Founder / Smart Contracts & Architecture",
-        avatar: "https://picsum.photos/id/64/128",
-        bio: "Ex-Solana core contributor / ex-Google AI infra",
+        name: "Bjorn",
+        role: "Founder / Entrepreneur"
       },
       {
-        name: "Colleague Name",
-        role: "Founder / ML & Verification",
-        avatar: "https://picsum.photos/id/91/128",
-        bio: "Ex-OpenAI / TEE & VeriLLM specialist",
+        name: "Matias",
+        role: "Founder / Tech Lead",
       },
     ],
   },
@@ -300,14 +296,8 @@ export default function AIPresentation() {
                     textAlign: "left",
                   }}
                 >
-                  <img
-                    src={member.avatar}
-                    alt={member.name}
-                    className="w-20 h-20 rounded-2xl mb-6 object-cover"
-                  />
                   <div className="font-bold text-2xl">{member.name}</div>
                   <div className="text-purple-400 mb-3">{member.role}</div>
-                  <p className="text-slate-400 text-[17px]">{member.bio}</p>
                 </motion.div>
               ))}
             </div>
